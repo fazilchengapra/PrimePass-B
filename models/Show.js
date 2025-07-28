@@ -5,8 +5,8 @@ const showModel = new mongoose.Schema({
     type: String,
     required: true,
   },
-  screenId: {
-    type: mongoose.Schema.Types.ObjectId,
+  screenCode: {
+    type: String,
     required: true,
     ref: "Screen",
   },
