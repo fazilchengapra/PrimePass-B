@@ -7,7 +7,7 @@
 const Screen = require("../models/Screen");
 const Theater = require("../models/Theater");
 
-const generateScreenId = async (theaterId) => {
+const generateScreenCode = async (theaterId) => {
   // Get theaterCode using theaterId
   const theater = await Theater.findById(theaterId).select("theaterCode");
   if (!theater) throw new Error("Theater not found!");
@@ -37,4 +37,4 @@ const generateScreenId = async (theaterId) => {
   return `${theaterCode}-${screenCode}`;
 };
 
-module.exports = generateScreenId;
+module.exports = generateScreenCode;

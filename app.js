@@ -9,7 +9,6 @@ var authRouters = require("./routes/authRoutes");
 var theaterRouters = require("./routes/theaterRoutes");
 var screenRouters = require("./routes/screenRoutes");
 var showRouters = require('./routes/showRoutes')
-var seatRouters = require('./routes/seatsRoutes')
 
 var app = express();
 
@@ -36,7 +35,6 @@ app.use("/api/auth", authRouters);
 app.use("/api/theaters", theaterRouters);
 app.use("/api/screens", screenRouters);
 app.use('/api/show', showRouters)
-app.use('/api/seat', seatRouters)
 
 // 404 error handler
 app.use(function (req, res, next) {

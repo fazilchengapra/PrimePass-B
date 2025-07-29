@@ -1,4 +1,5 @@
 const Screen = require("../models/Screen");
+const Seat = require("../models/Seat");
 const Show = require("../models/Show");
 const isValidDate = require("../utils/isValidDate");
 const sendResponse = require("../utils/sendResponse");
@@ -6,7 +7,9 @@ const sendResponse = require("../utils/sendResponse");
 exports.createShow = async (req, res) => {
   try {
     const { theaterCode, screenCode, startTime, endTime } = req.body;
-    const screen = await Screen.findOne({ screenCode }).populate("theaterId");
+    const screen = await Screen.findOne({ screenCode }).populate(
+      "theaterId seatLayout"
+    );
     if (!screen) return sendResponse(res, 404, "Screen not found!", false);
 
     const thisScreenTheater = screen.theaterId.theaterCode;
@@ -17,7 +20,26 @@ exports.createShow = async (req, res) => {
     if (!isValid) return sendResponse(res, 400, dateError, false);
 
     const show = await Show.create(req.body);
-    return res.status(200).json(show);
+
+    const seatLayout = screen.seatLayout;
+    if (!seatLayout)
+      return sendResponse(
+        res,
+        400,
+        "No seat layout defined this screen!",
+        false
+      );
+
+    const seatsToInsert = seatLayout.map((seat) => ({
+      showId: show._id,
+      theaterCode,
+      screenCode,
+      seatNumber: seat.seatNumber,
+      row: seat.row,
+      type: seat.type,
+    }));
+    await Seat.insertMany(seatsToInsert);
+    return sendResponse(res, 200, "Show and seats created!", true, show);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }

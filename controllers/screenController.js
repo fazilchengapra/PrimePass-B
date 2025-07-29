@@ -1,12 +1,12 @@
 const Screen = require("../models/Screen");
-const generateScreenId = require("../utils/generateScreenId");
+const generateScreenCode = require("../utils/generateScreenCode");
 const isValidObjectId = require("../utils/isValidObjectId");
 const sendResponse = require("../utils/sendResponse");
 
 exports.createScreen = async (req, res) => {
   try {
-    const { theaterId, screenNumber, name, totalSeats } = req.body;
-    const screenCode = await generateScreenId(theaterId);
+    const { theaterId, screenNumber, name, totalSeats, seatLayout } = req.body;
+    const screenCode = await generateScreenCode(theaterId);
 
     const screen = await Screen.create({
       theaterId,
@@ -14,6 +14,7 @@ exports.createScreen = async (req, res) => {
       name,
       totalSeats,
       screenCode,
+      seatLayout
     });
     return sendResponse(res, 200, "Screen added success!", true, screen);
   } catch (error) {
