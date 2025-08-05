@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { type } = require("../validations/zone.validation");
 
 const seatModel = new mongoose.Schema(
   {
@@ -17,6 +18,11 @@ const seatModel = new mongoose.Schema(
       required: true,
       ref: "Screen",
     },
+    zoneCode: {
+      type: String,
+      required: true,
+      ref: "Zone",
+    },
     seatNumber: {
       type: String,
       required: true, // Example: "A1"
@@ -32,31 +38,41 @@ const seatModel = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["available", "booked", "held"],
+      enum: ["available", "locked", "booked"],
       default: "available",
     },
+    gridSeatNum: {type: Number, required: true}, // For grid-based seat management
     lockedBy: {
-      type: mongoose.Schema.Types.ObjectId, // user ID
+      type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       default: null,
     },
     lockedAt: {
       type: Date,
       default: null,
+      expires: 900, // 15 minutes TTL
     },
+    version: { type: Number, default: 0 }, // For optimistic concurrency control
     bookedBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       default: null,
     },
-    bookedAt: {
-      type: Date,
-      default: null,
-    },
+    bookedAt: { type: Date, default: null },
   },
   { timestamps: true }
 );
 
+seatModel.index(
+  { lockedAt: 1 },
+  {
+    expireAfterSeconds: 900,
+    partialFilterExpression: { lockedAt: { $exists: true } },
+  }
+);
+
+// Compound index for efficient seat availability queries
+seatModel.index({ showId: 1, status: 1 });
 seatModel.index({ showId: 1, row: 1, seatNumber: 1 }, { unique: true });
 
 module.exports = mongoose.model("Seat", seatModel);

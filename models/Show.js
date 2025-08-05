@@ -5,6 +5,7 @@ const showModel = new mongoose.Schema({
     type: String,
     required: true,
   },
+  zoneCode: {type: String, required: true, ref: "Zone"},
   screenCode: {
     type: String,
     required: true,

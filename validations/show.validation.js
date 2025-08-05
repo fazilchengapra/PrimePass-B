@@ -2,6 +2,7 @@ const Joi = require("joi");
 
 const showValidation = Joi.object({
     movieId: Joi.string().trim().min(3).max(10).required(),
+    zoneCode: Joi.string().trim().min(9).required(),
     screenCode: Joi.string().trim().min(9).max(18).required(),
     theaterCode: Joi.string().trim().min(5).max(10).required(),
     startTime: Joi.date().required(),

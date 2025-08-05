@@ -8,7 +8,9 @@ const cors = require("cors");
 var authRouters = require("./routes/authRoutes");
 var theaterRouters = require("./routes/theaterRoutes");
 var screenRouters = require("./routes/screenRoutes");
-var showRouters = require('./routes/showRoutes')
+var showRouters = require("./routes/showRoutes");
+var zoneRouters = require("./routes/zoneRouter");
+var seatsRouters = require("./routes/seatsRouter");
 
 var app = express();
 
@@ -34,7 +36,9 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/api/auth", authRouters);
 app.use("/api/theaters", theaterRouters);
 app.use("/api/screens", screenRouters);
-app.use('/api/show', showRouters)
+app.use("/api/show", showRouters);
+app.use("/api/zone", zoneRouters);
+app.use("/api/seats", seatsRouters);
 
 // 404 error handler
 app.use(function (req, res, next) {

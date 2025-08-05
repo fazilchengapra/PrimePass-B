@@ -11,20 +11,9 @@ const screenModel = new mongoose.Schema(
     screenNumber: { type: Number, required: true },
     name: { type: String, required: true },
     totalSeats: { type: Number, required: true },
-    seatLayout: {
-      type: [
-        {
-          seatNumber: { type: String, required: true },
-          row: { type: String, required: true },
-          type: {
-            type: String,
-            enum: ["Regular", "Premium"],
-            default: "Regular",
-          },
-          _id: false,
-        },
-      ],
-      required: true,
+    capacity: {
+      regular: { type: Number, default: 0 },
+      premium: { type: Number, default: 0 },
     },
   },
   { timestamps: true }

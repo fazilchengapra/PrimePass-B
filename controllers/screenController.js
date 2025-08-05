@@ -5,7 +5,7 @@ const sendResponse = require("../utils/sendResponse");
 
 exports.createScreen = async (req, res) => {
   try {
-    const { theaterId, screenNumber, name, totalSeats, seatLayout } = req.body;
+    const { theaterId, screenNumber, name, totalSeats, seatLayout, zones } = req.body;
     const screenCode = await generateScreenCode(theaterId);
 
     const screen = await Screen.create({
@@ -14,7 +14,7 @@ exports.createScreen = async (req, res) => {
       name,
       totalSeats,
       screenCode,
-      seatLayout
+      seatLayout,
     });
     return sendResponse(res, 200, "Screen added success!", true, screen);
   } catch (error) {
