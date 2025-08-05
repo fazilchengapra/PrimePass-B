@@ -7,54 +7,101 @@ const sendResponse = require("../utils/sendResponse");
 
 exports.createShow = async (req, res) => {
   try {
-    const { theaterCode, screenCode, startTime, endTime, zoneCode } = req.body;
-    if (!theaterCode || !screenCode || !startTime || !endTime || !zoneCode)
-      return sendResponse(res, 400, "All fields are required!", false);
+    const { theaterCode, screenCode, startTime, endTime, movieId, zoneCodes } =
+      req.body;
 
-    const thisZone = await Zone.findOne({ screenCode, zoneCode });
-
-    if (!thisZone) return sendResponse(res, 404, "Zone not found!", false);
-    if (thisZone.screenCode !== screenCode)
-      return sendResponse(res, 400, "Unmatched screen code!", false);
+    // ✅ Input validation
+    if (
+      !theaterCode ||
+      !screenCode ||
+      !startTime ||
+      !endTime ||
+      !movieId ||
+      !zoneCodes ||
+      !Array.isArray(zoneCodes) ||
+      zoneCodes.length === 0
+    ) {
+      return sendResponse(
+        res,
+        400,
+        "All fields (including zoneCodes[]) are required!",
+        false
+      );
+    }
 
     const [isValid, dateError] = isValidDate(startTime, endTime);
     if (!isValid) return sendResponse(res, 400, dateError, false);
 
-    // ✅ Create the show first
-    const show = await Show.create(req.body);
+    // ✅ Fetch all zones for this screen
+    const zones = await Zone.find({
+      screenCode,
+      zoneCode: { $in: zoneCodes },
+    });
+
+    if (zones.length !== zoneCodes.length) {
+      return sendResponse(
+        res,
+        404,
+        "One or more zoneCodes are invalid for the given screen.",
+        false
+      );
+    }
+
+    // ✅ Create the show
+    const show = await Show.create({
+      movieId,
+      theaterCode,
+      screenCode,
+      startTime,
+      endTime,
+      zoneCodes,
+    });
 
     const seats = [];
 
-    // ✅ Loop through each row in the zone
-    for (const row of thisZone.rows) {
-      const pattern = thisZone.seatPattern.get(row); // because seatPattern is a Map
-      if (!pattern) continue;
+    for (const zone of zones) {
+      for (const row of zone.rows) {
+        const pattern = zone.seatPattern.get(row);
+        if (!pattern) continue;
 
-      for (let i = 0; i < pattern.length; i++) {
-        const seatNumber = pattern[i];
+        for (let i = 0; i < pattern.length; i++) {
+          const seatNumber = pattern[i];
+          if (seatNumber === null) continue;
 
-        // Skip gap positions
-        if (seatNumber === null) continue;
-
-        seats.push({
-          showId: show._id,
-          theaterCode,
-          screenCode,
-          zoneCode,
-          seatNumber,
-          row,
-          gridSeatNum: i+1,
-          type: thisZone.type || "Regular", // Default to Regular if not specified
-        });
+          seats.push({
+            showId: show._id,
+            theaterCode,
+            screenCode,
+            zoneCode: zone.zoneCode,
+            seatNumber,
+            row,
+            gridSeatNum: i + 1,
+            type: zone.type || "Regular",
+          });
+        }
       }
     }
 
-    // ✅ Insert generated seats
+    // ✅ Bulk insert seats
     await Seat.insertMany(seats);
 
-    return sendResponse(res, 200, "Show and seats created!", true, show);
+    return sendResponse(
+      res,
+      200,
+      "Show and seats created successfully!",
+      true,
+      {
+        showId: show._id,
+        seatCount: seats.length,
+      }
+    );
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    return sendResponse(
+      res,
+      500,
+      error.message || "Internal server error",
+      false
+    );
   }
 };
 

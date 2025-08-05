@@ -1,11 +1,12 @@
+const { ref } = require("joi");
 const mongoose = require("mongoose");
 
 const showModel = new mongoose.Schema({
   movieId: {
     type: String,
     required: true,
+    ref: "Movie",
   },
-  zoneCode: {type: String, required: true, ref: "Zone"},
   screenCode: {
     type: String,
     required: true,
@@ -18,6 +19,6 @@ const showModel = new mongoose.Schema({
   format: { type: String, enum: ["2D", "3D", "IMAX"], default: "2D" },
 });
 
-showModel.index({ theaterCode: 1,movieId: 1, startTime: 1, endTime: 1 }, { unique: true });
+showModel.index({ startTime: 1, endTime: 1, screenCode: 1 }, { unique: true });
 
 module.exports = mongoose.model("Show", showModel);

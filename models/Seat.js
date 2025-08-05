@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const { type } = require("../validations/zone.validation");
 
 const seatModel = new mongoose.Schema(
   {
@@ -71,8 +70,7 @@ seatModel.index(
   }
 );
 
-// Compound index for efficient seat availability queries
+// Compound index for efficient seat availability queries 
 seatModel.index({ showId: 1, status: 1 });
-seatModel.index({ showId: 1, row: 1, seatNumber: 1 }, { unique: true });
 
 module.exports = mongoose.model("Seat", seatModel);
