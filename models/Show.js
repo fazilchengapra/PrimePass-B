@@ -12,7 +12,7 @@ const showModel = new mongoose.Schema({
     required: true,
     ref: "Screen",
   },
-  theaterCode: { type: String, required: true, ref: "Theater" },
+  theaterId: { type: mongoose.Schema.Types.ObjectId, required: true, ref: "Theater" },
   startTime: { type: Date, required: true },
   endTime: { type: Date, required: true },
   language: { type: String },

@@ -7,12 +7,12 @@ const sendResponse = require("../utils/sendResponse");
 
 exports.createShow = async (req, res) => {
   try {
-    const { theaterCode, screenCode, startTime, endTime, movieId, zoneCodes } =
+    const { theaterId, screenCode, startTime, endTime, movieId, zoneCodes } =
       req.body;
 
     // ✅ Input validation
     if (
-      !theaterCode ||
+      !theaterId ||
       !screenCode ||
       !startTime ||
       !endTime ||
@@ -37,7 +37,7 @@ exports.createShow = async (req, res) => {
       screenCode,
       zoneCode: { $in: zoneCodes },
     });
-
+    
     if (zones.length !== zoneCodes.length) {
       return sendResponse(
         res,
@@ -47,10 +47,13 @@ exports.createShow = async (req, res) => {
       );
     }
 
+    console.log('hey i am here');
+    
+
     // ✅ Create the show
     const show = await Show.create({
       movieId,
-      theaterCode,
+      theaterId,
       screenCode,
       startTime,
       endTime,
@@ -58,6 +61,7 @@ exports.createShow = async (req, res) => {
     });
 
     const seats = [];
+    
 
     for (const zone of zones) {
       for (const row of zone.rows) {
@@ -70,7 +74,7 @@ exports.createShow = async (req, res) => {
 
           seats.push({
             showId: show._id,
-            theaterCode,
+            theaterId,
             screenCode,
             zoneCode: zone.zoneCode,
             seatNumber,

@@ -7,7 +7,7 @@ const seatModel = new mongoose.Schema(
       required: true,
       ref: "Show",
     },
-    theaterCode: {
+    theaterId: {
       type: String,
       required: true,
       ref: "Theater",
@@ -40,7 +40,7 @@ const seatModel = new mongoose.Schema(
       enum: ["available", "locked", "booked"],
       default: "available",
     },
-    gridSeatNum: {type: Number, required: true}, // For grid-based seat management
+    gridSeatNum: { type: Number, required: true }, // For grid-based seat management
     lockedBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
@@ -70,7 +70,7 @@ seatModel.index(
   }
 );
 
-// Compound index for efficient seat availability queries 
+// Compound index for efficient seat availability queries
 seatModel.index({ showId: 1, status: 1 });
 
 module.exports = mongoose.model("Seat", seatModel);
