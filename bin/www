@@ -3,75 +3,89 @@
 /**
  * Module dependencies.
  */
-
-
 var app = require("../app");
 var debug = require("debug")("goal-zone-b:server");
 var http = require("http");
 var connectDb = require("../utils/db");
 
+// ✅ Import socket.io
+var { Server } = require("socket.io");
+
 /**
  * Get port from environment and store in Express.
  */
-
 var port = normalizePort(process.env.PORT || "3000");
 app.set("port", port);
 
 /**
  * Create HTTP server.
  */
-
 var server = http.createServer(app);
+
+/**
+ * Setup Socket.IO
+ */
+var io = new Server(server, {
+  cors: {
+    origin: " http://localhost:3000", // change to frontend url in production
+    methods: ["GET", "POST"],
+  },
+});
+
+// Handle socket connections
+io.on("connection", (socket) => {
+  console.log("🔗 User connected:", socket.id);
+
+  socket.on("lockSeat", (data) => {
+    console.log("Seat locked:", data);
+    io.emit("seatLocked", data); // broadcast to all
+  });
+
+  socket.on("bookSeat", (data) => {
+    console.log("Seat booked:", data);
+    io.emit("seatBooked", data);
+  });
+
+  socket.on("disconnect", () => {
+    console.log("❌ User disconnected:", socket.id);
+  });
+});
+
+// ✅ Make io available inside controllers
+app.set("io", io);
 
 /**
  * Listen on provided port, on all network interfaces.
  */
-
 connectDb()
   .then(() => {
-    // Only start the server if MongoDB connection is successful
     server.listen(port);
     server.on("error", onError);
     server.on("listening", onListening);
   })
   .catch((err) => {
-    // Log the error and exit the process
     console.error("Error connecting to MongoDB:", err);
-    process.exit(1); // Exit the process with an error code
+    process.exit(1);
   });
 
 /**
  * Normalize a port into a number, string, or false.
  */
-
 function normalizePort(val) {
   var port = parseInt(val, 10);
-
-  if (isNaN(port)) {
-    // named pipe
-    return val;
-  }
-
-  if (port >= 0) {
-    // port number
-    return port;
-  }
-
+  if (isNaN(port)) return val;
+  if (port >= 0) return port;
   return false;
 }
 
 /**
  * Event listener for HTTP server "error" event.
  */
-
 function onError(error) {
-  if (error.syscall !== "listen") {
-    throw error;
-  }
+  if (error.syscall !== "listen") throw error;
 
   var bind = typeof port === "string" ? "Pipe " + port : "Port " + port;
 
-  // handle specific listen errors with friendly messages
   switch (error.code) {
     case "EACCES":
       console.error(bind + " requires elevated privileges");
@@ -89,7 +103,6 @@ function onError(error) {
 /**
  * Event listener for HTTP server "listening" event.
  */
-
 function onListening() {
   var addr = server.address();
   var bind = typeof addr === "string" ? "pipe " + addr : "port " + addr.port;
