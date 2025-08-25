@@ -131,3 +131,42 @@ exports.getSeatLayout = async (req, res) => {
     return sendResponse(res, 500, error.message, false);
   }
 };
+
+
+exports.lockSeats = async (req, res) => {
+  try {
+    const { seatIds, userId } = req.body;
+
+    if (!Array.isArray(seatIds) || seatIds.length === 0) {
+      return res.status(400).json({ error: "No seatIds provided" });
+    }
+
+    if (seatIds.length > 10) {
+      return res.status(400).json({ error: "Max 10 seats allowed per user" });
+    }
+
+    // Lock seats if available
+    const result = await Seat.updateMany(
+      { _id: { $in: seatIds }, status: "available" },
+      {
+        $set: {
+          status: "locked",
+          lockedBy: userId,
+          lockedAt: new Date(),
+        },
+        $inc: { version: 1 },
+      }
+    );
+
+    if (result.modifiedCount === 0) {
+      return res
+        .status(400)
+        .json({ error: "Some seats are already locked/booked" });
+    }
+
+    return res.json({ success: true, message: "Seats locked", result });
+  } catch (err) {
+    console.error("Error locking seats:", err);
+    return res.status(500).json({ error: "Server error" });
+  }
+};

@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const seatModel = new mongoose.Schema(
+const seatSchema = new mongoose.Schema(
   {
     showId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -24,11 +24,11 @@ const seatModel = new mongoose.Schema(
     },
     seatNumber: {
       type: String,
-      required: true, // Example: "A1"
+      required: true,
     },
     row: {
       type: String,
-      required: true, // Example: "A"
+      required: true,
     },
     type: {
       type: String,
@@ -40,7 +40,8 @@ const seatModel = new mongoose.Schema(
       enum: ["available", "locked", "booked"],
       default: "available",
     },
-    gridSeatNum: { type: Number, required: true }, // For grid-based seat management
+    gridSeatNum: { type: Number, required: true },
+
     lockedBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
@@ -49,9 +50,10 @@ const seatModel = new mongoose.Schema(
     lockedAt: {
       type: Date,
       default: null,
-      expires: 900, // 15 minutes TTL
+      index: { expires: "8m" }, // 🔥 TTL: auto remove after 8 minutes
     },
-    version: { type: Number, default: 0 }, // For optimistic concurrency control
+    version: { type: Number, default: 0 },
+
     bookedBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
@@ -62,15 +64,6 @@ const seatModel = new mongoose.Schema(
   { timestamps: true }
 );
 
-seatModel.index(
-  { lockedAt: 1 },
-  {
-    expireAfterSeconds: 900,
-    partialFilterExpression: { lockedAt: { $exists: true } },
-  }
-);
+seatSchema.index({ showId: 1, status: 1 });
 
-// Compound index for efficient seat availability queries
-seatModel.index({ showId: 1, status: 1 });
-
-module.exports = mongoose.model("Seat", seatModel);
+module.exports = mongoose.model("Seat", seatSchema);
