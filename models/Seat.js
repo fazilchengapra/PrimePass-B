@@ -50,7 +50,6 @@ const seatSchema = new mongoose.Schema(
     lockedAt: {
       type: Date,
       default: null,
-      index: { expires: "8m" }, // 🔥 TTL: auto remove after 8 minutes
     },
     version: { type: Number, default: 0 },
 

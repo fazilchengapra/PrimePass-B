@@ -50,13 +50,7 @@ exports.getSeatLayout = async (req, res) => {
     const zoneAreaMap = {}; // zoneCode → objArea
 
     for (const seat of seats) {
-      const {
-        zoneCode,
-        row,
-        gridSeatNum,
-        seatNumber,
-        status,
-      } = seat;
+      const { _id, zoneCode, row, gridSeatNum, seatNumber, status } = seat;
 
       const displaySeatNumber = seatNumber.toString();
       const seatId = extractSeatId(seatNumber);
@@ -105,6 +99,7 @@ exports.getSeatLayout = async (req, res) => {
         SeatStatus: mapSeatStatus(status),
         seatNumber,
         displaySeatNumber,
+        seatId: _id,
       });
     }
 
@@ -132,26 +127,25 @@ exports.getSeatLayout = async (req, res) => {
   }
 };
 
-
-exports.lockSeats = async (req, res) => {
+exports.lockSeats = async (req, res, seatIds) => {
   try {
-    const { seatIds, userId } = req.body;
-
     if (!Array.isArray(seatIds) || seatIds.length === 0) {
-      return res.status(400).json({ error: "No seatIds provided" });
+      return sendResponse(res, 400, "seatIds must be a non-empty array", false);
+      // 400 Bad Request → client sent invalid data
     }
 
     if (seatIds.length > 10) {
-      return res.status(400).json({ error: "Max 10 seats allowed per user" });
+      return sendResponse(res, 413, "Max 10 seats allowed per user", false);
+      // 413 Payload Too Large → fits better than 400 for exceeding limits
     }
 
-    // Lock seats if available
+    // Try to lock seats
     const result = await Seat.updateMany(
       { _id: { $in: seatIds }, status: "available" },
       {
         $set: {
           status: "locked",
-          lockedBy: userId,
+          lockedBy: req.user.id,
           lockedAt: new Date(),
         },
         $inc: { version: 1 },
@@ -159,14 +153,28 @@ exports.lockSeats = async (req, res) => {
     );
 
     if (result.modifiedCount === 0) {
-      return res
-        .status(400)
-        .json({ error: "Some seats are already locked/booked" });
+      return sendResponse(
+        res,
+        409,
+        "Some or all seats are already booked/locked",
+        false
+      );
+      // 409 Conflict → resource state doesn’t allow this action
     }
 
-    return res.json({ success: true, message: "Seats locked", result });
+    // ✅ Notify clients via WebSocket
+    const io = req.app.get("io");
+    io.emit("seatLocked", {
+      seatIds,
+      lockedBy: req.user.id,
+      lockedAt: new Date(),
+    });
+
+    return { message: "Seats locked successfully", status: true };
+    // 200 OK → successfully locked
   } catch (err) {
     console.error("Error locking seats:", err);
-    return res.status(500).json({ error: "Server error" });
+    return sendResponse(res, 500, "Server error", false);
+    // 500 Internal Server Error
   }
 };

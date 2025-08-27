@@ -11,6 +11,8 @@ var screenRouters = require("./routes/screenRoutes");
 var showRouters = require("./routes/showRoutes");
 var zoneRouters = require("./routes/zoneRouter");
 var seatsRouters = require("./routes/seatsRouter");
+var pendingBookingRouters = require('./routes/pendingBookRoutes');
+const authMiddleware = require("./middleware/authMiddleware");
 
 var app = express();
 
@@ -39,6 +41,7 @@ app.use("/api/screens", screenRouters);
 app.use("/api/show", showRouters);
 app.use("/api/zone", zoneRouters);
 app.use("/api/seats", seatsRouters);
+app.use('/api/pending-booking',authMiddleware, pendingBookingRouters)
 
 // 404 error handler
 app.use(function (req, res, next) {

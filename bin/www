@@ -39,8 +39,11 @@ io.on("connection", (socket) => {
   console.log("🔗 User connected:", socket.id);
 
   socket.on("lockSeat", (data) => {
-    console.log("Seat locked:", data);
     io.emit("seatLocked", data); // broadcast to all
+  });
+
+  socket.on("unlockSeat", (data) => {
+    io.emit("seatUnLocked", data); // broadcast to all
   });
 
   socket.on("bookSeat", (data) => {
@@ -62,7 +65,7 @@ app.set("io", io);
 connectDb()
   .then(() => {
     server.listen(port);
-    startAutoUnlock()
+    startAutoUnlock(io)
     server.on("error", onError);
     server.on("listening", onListening);
   })
