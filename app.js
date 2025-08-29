@@ -11,7 +11,10 @@ var screenRouters = require("./routes/screenRoutes");
 var showRouters = require("./routes/showRoutes");
 var zoneRouters = require("./routes/zoneRouter");
 var seatsRouters = require("./routes/seatsRouter");
-var pendingBookingRouters = require('./routes/pendingBookRoutes');
+var pendingBookingRouters = require("./routes/pendingBookRoutes");
+var paymentRouters = require("./routes/paymentRoutes");
+var orderRouters = require("./routes/orderRoute");
+
 const authMiddleware = require("./middleware/authMiddleware");
 
 var app = express();
@@ -41,7 +44,9 @@ app.use("/api/screens", screenRouters);
 app.use("/api/show", showRouters);
 app.use("/api/zone", zoneRouters);
 app.use("/api/seats", seatsRouters);
-app.use('/api/pending-booking',authMiddleware, pendingBookingRouters)
+app.use("/api/pending-booking", authMiddleware, pendingBookingRouters);
+app.use("/api/payments", authMiddleware, paymentRouters);
+app.use("/api/order", authMiddleware, orderRouters);
 
 // 404 error handler
 app.use(function (req, res, next) {
