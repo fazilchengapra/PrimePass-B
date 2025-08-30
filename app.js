@@ -13,7 +13,7 @@ var zoneRouters = require("./routes/zoneRouter");
 var seatsRouters = require("./routes/seatsRouter");
 var pendingBookingRouters = require("./routes/pendingBookRoutes");
 var paymentRouters = require("./routes/paymentRoutes");
-var orderRouters = require("./routes/orderRoute");
+var orderRouters = require("./routes/orderRoutes");
 
 const authMiddleware = require("./middleware/authMiddleware");
 

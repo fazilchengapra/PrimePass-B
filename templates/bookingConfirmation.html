@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en" style="margin:0;padding:0;">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Booking Confirmation</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background: #f4f4f4;
+        color: #333;
+      }
+      .container {
+        max-width: 600px;
+        margin: 20px auto;
+        background: #ffffff;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      }
+      .header {
+        background: #111827;
+        color: #ffffff;
+        text-align: center;
+        padding: 20px;
+      }
+      .header h1 {
+        margin: 0;
+        font-size: 22px;
+      }
+      .content {
+        padding: 20px;
+      }
+      .content h2 {
+        color: #111827;
+        font-size: 18px;
+      }
+      .details {
+        margin: 20px 0;
+      }
+      .details table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      .details td {
+        padding: 8px 5px;
+        border-bottom: 1px solid #eee;
+      }
+      .footer {
+        text-align: center;
+        padding: 15px;
+        font-size: 13px;
+        color: #777;
+        background: #f9fafb;
+      }
+      @media only screen and (max-width: 600px) {
+        .container {
+          margin: 10px;
+          width: auto;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Header -->
+      <div class="header">
+        <h1>🎬 Booking Confirmed!</h1>
+      </div>
+
+      <!-- Content -->
+      <div class="content">
+        <h2>Hi {{name}},</h2>
+        <p>
+          Thank you for booking with <strong>PrimePass</strong>. Your payment has been
+          received and your seats are now confirmed. 🎉
+        </p>
+
+        <!-- Booking Details -->
+        <div class="details">
+          <table>
+            <tr>
+              <td><strong>Movie:</strong></td>
+              <td>{{movie}}</td>
+            </tr>
+            <tr>
+              <td><strong>Theater:</strong></td>
+              <td>{{theater}}</td>
+            </tr>
+            <tr>
+              <td><strong>Date & Time:</strong></td>
+              <td>{{dateTime}}</td>
+            </tr>
+            <tr>
+              <td><strong>Seats:</strong></td>
+              <td>{{seats}}</td>
+            </tr>
+            <tr>
+              <td><strong>Amount Paid:</strong></td>
+              <td>₹{{amount}}</td>
+            </tr>
+            <tr>
+              <td><strong>Booking ID:</strong></td>
+              <td>{{bookingId}}</td>
+            </tr>
+          </table>
+        </div>
+
+        <p>
+          Please arrive at the theater 15 minutes before the showtime.
+          Show this email or your QR code at the entrance.
+        </p>
+      </div>
+
+      <!-- Footer -->
+      <div class="footer">
+        © 2025 PrimePass. All rights reserved. <br />
+        Need help? Contact us at
+        <a href="mailto:support@primepass.com">support@primepass.com</a>
+      </div>
+    </div>
+  </body>
+</html>

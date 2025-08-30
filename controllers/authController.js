@@ -25,7 +25,7 @@ exports.register = async (req, res) => {
       return res.status(400).json({ message: "This Email already exists" });
 
     const user = await User.create({ username, email, password, role });
-    
+
     res.status(201).json({ message: "User registered successfully" });
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -61,9 +61,44 @@ exports.login = async (req, res) => {
       .status(200)
       .json({
         message: "Login successful",
-        user: { id: user._id, username: user.username },
+        user: { _id: user._id, username: user.username, email: user.email },
       });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
+};
+
+exports.isMe = async (req, res) => {
+  try {
+    if (!req.user || !req.user.id) {
+      return res.json({ loggedIn: false });
+    }
+
+    // Fetch user (exclude password)
+    const user = await User.findById(req.user.id).select(
+      "_id username email role"
+    );
+
+    if (!user) {
+      return res.json({ loggedIn: false });
+    }
+
+    return res.json({
+      loggedIn: true,
+      user,
+    });
+  } catch (err) {
+    console.error("isMe error:", err);
+    return res.status(500).json({ loggedIn: false, message: "Server error" });
+  }
+};
+
+exports.logout = (req, res) => {
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production", // only https in production
+    sameSite: "strict",
+  });
+
+  return res.json({ success: true, message: "Logged out successfully" });
 };

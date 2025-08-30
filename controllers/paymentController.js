@@ -1,3 +1,4 @@
+const { log } = require("console");
 const razorpay = require("../config/razorpay");
 const Booking = require("../models/Booking");
 const PaymentOrder = require("../models/PaymentOrder");
@@ -8,6 +9,7 @@ const { updatePaymentOrder } = require("../services/paymentOrder");
 const { bookSeats } = require("../services/setSeatBooked");
 const getSeatIds = require("../utils/getSeatIds");
 const sendResponse = require("../utils/sendResponse");
+const { sendBookingConfirmMail } = require("../services/sendNotification");
 
 exports.createOrder = async (req, res) => {
   try {
@@ -82,6 +84,9 @@ exports.verifyPayment = async (req, res) => {
       paymentStatus: "paid",
     });
 
+    const userName = req?.user?.name || "Customer";
+    const userEmail = req?.user?.email;
+    
     const seatIds = getSeatIds(pending.seats);
     const seatsBook = await bookSeats(seatIds, req.user.id);
     if (!seatsBook.success)
@@ -103,6 +108,19 @@ exports.verifyPayment = async (req, res) => {
       BookedAt: new Date(),
     });
 
+    const seats = booking.seats.map(s => s?.number)
+
+    const sendMailDetails = {
+      name: userName,
+      movie: booking.movieTitle,
+      theater: booking.theaterName,
+      dateTime: booking.showDate,
+      seats,
+      amount: booking.totalAmount,
+      bookingId: booking._id,
+    }
+
+    await sendBookingConfirmMail('muhammedfazilchengapra@gmail.com', sendMailDetails);
     // 4. Delete pending booking
     await pendingBookingModel.findByIdAndDelete(pendingRecordId);
 
