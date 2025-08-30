@@ -129,5 +129,5 @@ PrimePass is built with a **modern and scalable technology stack**, combining th
 | ------ | ----------------------- | ----------------- | ------ | ------------------------------------ |
 | POST   | `/api/bookings`         | `bookingData`     | object | Book seats for a show                |
 | GET    | `/api/bookings/:userId` | `userId`          | string | Get all bookings for a user          |
-| POST   | `/api/payments/create`  | `paymentDetails`  | object | Initialize payment (Razorpay/Stripe) |
+| POST   | `/api/payments/create`  | `paymentDetails`  | object | Initialize payment (Razorpay) |
 | POST   | `/api/payments/verify`  | `paymentResponse` | object | Verify payment and confirm booking   |
