@@ -21,7 +21,7 @@ exports.createPendingBooking = async (req, res) => {
       totalAmount: grandTotal,
       zoneDetails: breakdown,
       numberOfSeats: seats.length,
-      seatIds: seats.map((s) => s.id), // 👈 added
+      seatIds: seats.map((s) => s.id),
     });
 
     const { error } = pendingBookingValidation.validate(req.body);
@@ -32,7 +32,7 @@ exports.createPendingBooking = async (req, res) => {
 
     const newPendingRecord = await pendingBookingModel.create(req.body);
 
-    sendResponse(
+    return sendResponse(
       res,
       200,
       "Pending Booking Record Created Success!!",
@@ -45,7 +45,7 @@ exports.createPendingBooking = async (req, res) => {
       return sendResponse(res, 409, "Seat already locked for this show", false);
     }
     console.error("Error in createPendingBooking:", error);
-    sendResponse(res, 500, "Server error", false);
+    return sendResponse(res, 500, "Server error", false);
   }
 };
 
