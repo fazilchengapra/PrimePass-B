@@ -10,6 +10,7 @@ const { bookSeats } = require("../services/setSeatBooked");
 const getSeatIds = require("../utils/getSeatIds");
 const sendResponse = require("../utils/sendResponse");
 const { sendBookingConfirmMail } = require("../services/sendNotification");
+const { sendBookingConfirmation } = require("../services/smsService");
 
 exports.createOrder = async (req, res) => {
   try {
@@ -120,6 +121,7 @@ exports.verifyPayment = async (req, res) => {
       bookingId: booking._id,
     }
 
+    await sendBookingConfirmation('+919633620711')
     await sendBookingConfirmMail('muhammedfazilchengapra@gmail.com', sendMailDetails);
     // 4. Delete pending booking
     await pendingBookingModel.findByIdAndDelete(pendingRecordId);

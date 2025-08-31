@@ -24,6 +24,15 @@ On the frontend, I used **React 19, Redux Toolkit, Tailwind CSS, Material UI, Ra
 - 📩 **Email Notifications** – Instant booking confirmation emails with **rich HTML templates**.
 - 📱 **Responsive UI** – Optimized and user-friendly design across **desktop and mobile devices**.
 
+### ⏳ Seat Lock & Unlock Mechanism
+
+PrimePass ensures fairness with a **seat lock system**:
+
+- When a booking is initiated (`POST /api/bookings`), selected seats are **locked** with the user's ID and timestamp.
+- If payment is successful within 8 minutes → the booking is **confirmed**.
+- If payment is not completed within 8 minutes → the system **automatically unlocks** the seats, making them available for others in real-time.
+- This process is handled via **Socket.IO events** and background jobs to maintain concurrency without conflicts.
+
 ### 🛠️ Admin Features
 
 - 🏢 **Multi-Theater Management** – Add and manage **multiple theaters** with ease.
@@ -125,9 +134,9 @@ PrimePass is built with a **modern and scalable technology stack**, combining th
 
 ### 💳 Booking & Payment Routes
 
-| Method | Endpoint                | Parameters        | Type   | Description                          |
-| ------ | ----------------------- | ----------------- | ------ | ------------------------------------ |
-| POST   | `/api/bookings`         | `bookingData`     | object | Book seats for a show                |
-| GET    | `/api/bookings/:userId` | `userId`          | string | Get all bookings for a user          |
-| POST   | `/api/payments/create`  | `paymentDetails`  | object | Initialize payment (Razorpay) |
-| POST   | `/api/payments/verify`  | `paymentResponse` | object | Verify payment and confirm booking   |
+| Method | Endpoint                | Parameters        | Type   | Description                        |
+| ------ | ----------------------- | ----------------- | ------ | ---------------------------------- |
+| POST   | `/api/bookings`         | `bookingData`     | object | Book seats for a show              |
+| GET    | `/api/bookings/:userId` | `userId`          | string | Get all bookings for a user        |
+| POST   | `/api/payments/create`  | `paymentDetails`  | object | Initialize payment (Razorpay)      |
+| POST   | `/api/payments/verify`  | `paymentResponse` | object | Verify payment and confirm booking |
