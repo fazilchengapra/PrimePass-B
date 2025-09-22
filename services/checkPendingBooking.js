@@ -1,4 +1,4 @@
-const pendingBookingModel = require("../models/pendingBookingModel");
+const pendingBookingModel = require("../models/PendingBookingModel");
 
 const checkPendingBooking = async (pendingBookingId, userId) => {
   if (!pendingBookingId || !userId) {

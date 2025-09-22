@@ -1,4 +1,4 @@
-const pendingBookingModel = require("../models/pendingBookingModel");
+const pendingBookingModel = require("../models/PendingBookingModel");
 const calculateSeatsTotalAmount = require("../utils/calculateSeatsTotal");
 const sendResponse = require("../utils/sendResponse");
 const pendingBookingValidation = require("../validations/pendingBookingValidation");
