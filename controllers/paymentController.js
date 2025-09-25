@@ -122,7 +122,7 @@ exports.verifyPayment = async (req, res) => {
     }
 
     await sendBookingConfirmation('+919633620711')
-    await sendBookingConfirmMail('muhammedfazilchengapra@gmail.com', sendMailDetails);
+    await sendBookingConfirmMail(userEmail, sendMailDetails);
     // 4. Delete pending booking
     await pendingBookingModel.findByIdAndDelete(pendingRecordId);
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const startAutoUnlock = require("../services/seatUnlocker") ;
+const startAutoUnlock = require("../services/seatUnlocker");
 
 /**
  * Module dependencies.
@@ -29,7 +29,7 @@ var server = http.createServer(app);
  */
 var io = new Server(server, {
   cors: {
-    origin: " http://localhost:3000", // change to frontend url in production
+    origin: "http://localhost:3000", // change to frontend url in production
     methods: ["GET", "POST"],
   },
 });
@@ -65,7 +65,7 @@ app.set("io", io);
 connectDb()
   .then(() => {
     server.listen(port);
-    startAutoUnlock(io)
+    startAutoUnlock(io);
     server.on("error", onError);
     server.on("listening", onListening);
   })
