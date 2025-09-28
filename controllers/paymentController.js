@@ -31,10 +31,12 @@ exports.createOrder = async (req, res) => {
       return sendResponse(res, 400, checkSeats.message, false);
 
     const options = {
-      amount: pendingRecord.record.totalAmount * 100,
+      amount:  Math.round(pendingRecord.record.totalAmount * 100),
       currency: pendingRecord.record.currency,
       receipt: `rcpt_${Date.now()}`,
     };
+    console.log(pendingRecord.record.totalAmount);
+    
 
     const order = await razorpay.orders.create(options);
 
@@ -48,6 +50,8 @@ exports.createOrder = async (req, res) => {
 
     return sendResponse(res, 200, "Order created success!", true, order);
   } catch (error) {
+    console.log(error);
+    
     return sendResponse(res, 500, error.message, false);
   }
 };
@@ -59,6 +63,7 @@ exports.verifyPayment = async (req, res) => {
       razorpay_payment_id,
       razorpay_signature,
       pendingRecordId,
+      mail
     } = req.body;
 
     // 1. Verify Razorpay signature
@@ -86,7 +91,6 @@ exports.verifyPayment = async (req, res) => {
     });
 
     const userName = req?.user?.name || "Customer";
-    const userEmail = req?.user?.email;
     
     const seatIds = getSeatIds(pending.seats);
     const seatsBook = await bookSeats(seatIds, req.user.id);
@@ -121,8 +125,9 @@ exports.verifyPayment = async (req, res) => {
       bookingId: booking._id,
     }
 
-    await sendBookingConfirmation('+919633620711')
-    await sendBookingConfirmMail(userEmail, sendMailDetails);
+    // await sendBookingConfirmation('+919633620711')
+    
+    await sendBookingConfirmMail(mail, sendMailDetails);
     // 4. Delete pending booking
     await pendingBookingModel.findByIdAndDelete(pendingRecordId);
 

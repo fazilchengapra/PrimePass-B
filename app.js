@@ -27,7 +27,7 @@ app.use(
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
-    optionsSuccessStatus: 200, // ✅ Fixes preflight in some browsers
+    optionsSuccessStatus: 200,
   })
 );
 

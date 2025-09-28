@@ -175,7 +175,9 @@ exports.getShowByMovieId = async (req, res) => {
 
     return sendResponse(res, 200, "Shows fetched success!", true, { theaters, dates });
   } catch (error) {
+    console.log(error);
     return sendResponse(res, 500, error.message, false);
+    
   }
 };
 
