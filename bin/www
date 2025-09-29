@@ -29,7 +29,7 @@ var server = http.createServer(app);
  */
 var io = new Server(server, {
   cors: {
-    origin: "http://localhost:3000", // change to frontend url in production
+    origin: process.env.URL || "http://localhost:3000", // change to frontend url in production
     methods: ["GET", "POST"],
   },
 });
