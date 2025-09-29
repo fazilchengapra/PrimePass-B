@@ -23,7 +23,7 @@ require("dotenv").config();
 // CORS (very important: place BEFORE any route or middleware)
 app.use(
   cors({
-    origin: process.env.URL || "http://localhost:3000",
+    origin: process.env.URL,
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
