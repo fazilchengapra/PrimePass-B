@@ -1,6 +1,13 @@
-const { registerUser } = require("../../services/authService");
+const jwt = require("jsonwebtoken");
+const {
+  registerUser,
+  registrationOtpVerification,
+} = require("../../services/authService");
 const sendResponse = require("../../utils/sendResponse");
-const { registerSchema } = require("../../validations/auth.validation");
+const {
+  registerSchema,
+  otpSchema,
+} = require("../../validations/auth.validation");
 
 exports.register = async (req, res) => {
   try {
@@ -16,5 +23,41 @@ exports.register = async (req, res) => {
     }
     console.error("Registration error: ", err);
     return sendResponse(res, 500, "Registration failed", false);
+  }
+};
+
+exports.verifyRegistrationOtp = async (req, res) => {
+  try {
+    const { error } = otpSchema.validate(req.body);
+    if (error) return sendResponse(res, 400, "Invalid Credentials", false);
+    const { email, otp } = req.body;
+
+    const userId = await registrationOtpVerification(email, otp);
+    const token = jwt.sign({ id: userId }, process.env.JWT_SECRET, {
+      expiresIn: "7d",
+    });
+    res
+      .cookie("token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      })
+      .status(200)
+      .json({
+        message: "Login successful",
+      });
+  } catch (error) {
+    if (error.message.includes("Invalid Credentials")) {
+      return sendResponse(res, 401, error.message, false);
+    }
+    if (error.message.includes("Something went wrong")) {
+      return sendResponse(res, 500, error.message, false);
+    }
+    if (error.message.includes("Too many invalid attempts")) {
+      return sendResponse(res, 429, error.message, false);
+    }
+    console.error("OTP Verification error: ", error);
+    return sendResponse(res, 500, "OTP Verification failed", false);
   }
 };
