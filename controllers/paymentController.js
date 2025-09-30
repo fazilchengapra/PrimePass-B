@@ -9,7 +9,7 @@ const { updatePaymentOrder } = require("../services/paymentOrder");
 const { bookSeats } = require("../services/setSeatBooked");
 const getSeatIds = require("../utils/getSeatIds");
 const sendResponse = require("../utils/sendResponse");
-const { sendBookingConfirmMail } = require("../services/sendNotification");
+const { sendBookingConfirmMail } = require("../services/notificationService");
 const { sendBookingConfirmation } = require("../services/smsService");
 
 exports.createOrder = async (req, res) => {

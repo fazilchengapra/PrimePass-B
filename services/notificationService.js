@@ -2,19 +2,21 @@ const nodemailer = require("nodemailer");
 const fs = require("fs");
 const path = require("path");
 
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.EMAIL_USER, // Gmail address
+    pass: process.env.EMAIL_PASS, // App Password
+  },
+});
+
 exports.sendBookingConfirmMail = async (toEmail, bookingDetails) => {
   try {
-    // 1. Setup transporter with Gmail + App Password
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.EMAIL_USER, // Gmail address
-        pass: process.env.EMAIL_PASS, // App Password
-      },
-    });
-
     // 2. Load HTML template
-    const templatePath = path.join(__dirname, "../templates/bookingConfirmation.html");
+    const templatePath = path.join(
+      __dirname,
+      "../templates/bookingConfirmation.html"
+    );
     let htmlTemplate = fs.readFileSync(templatePath, "utf8");
 
     // 3. Replace placeholders with booking data

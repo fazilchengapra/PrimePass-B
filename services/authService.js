@@ -3,19 +3,21 @@ const jwt = require("jsonwebtoken");
 const { findOrCreateGoogleUser } = require("./oauth.service");
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
+const { hashPassword } = require("./cryptoService");
+const { generateAndSendOtp } = require("./otpService");
 require("dotenv").config();
 
-exports.loginUser = async (res, user) => {
+exports.loginUser = async (res, userData) => {
   // destructuring email and pass for simplify
-  const { email, password } = user;
+  const { email, password } = userData;
 
-  const userExist = await User.findOne({ email });
-  if (!userExist) throw new Error("Email or password incorrect");
+  const user = await User.findOne({ email });
+  if (!user) throw new Error("Email or password incorrect");
 
-  const isMatch = await bcrypt.compare(password, userExist.password);
+  const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) throw new Error("Email or password incorrect");
 
-  const token = jwt.sign({ id: userExist._id }, process.env.JWT_SECRET, {
+  const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
     expiresIn: "7d",
   });
   res
@@ -28,7 +30,11 @@ exports.loginUser = async (res, user) => {
     .status(200)
     .json({
       message: "Login successful",
-      user: { _id: userExist._id, username: userExist.username, email: userExist.email },
+      user: {
+        _id: user._id,
+        username: user.username,
+        email: user.email,
+      },
     });
 };
 
@@ -57,13 +63,20 @@ exports.verifyGoogleUser = async (code) => {
 exports.registerUser = async (userData) => {
   const { username, email, password, role } = userData;
 
-  const userExist = await User.findOne({ $or: [{ email }, { username }] });
-  if (userExist) {
-    const field = userExist.email === email ? "Email" : "Username";
+  let user = await User.findOne({ $or: [{ email }, { username }] });
+  if (user && user.isVerified) {
+    const field = user.email === email ? "Email" : "Username";
     throw new Error(`This ${field} already in use`);
   }
 
-  const hashedPass = await bcrypt.hash(password, 10);
+  const hashedPass = await hashPassword(password);
+  if (user && !user.isVerified)
+    user = await User.findByIdAndUpdate(
+      { _id: user._id },
+      { username, password: hashedPass, role }
+    );
+  else
+    user = await User.create({ username, email, password: hashedPass, role });
 
-  return await User.create({ username, email, password: hashedPass, role });
+  await generateAndSendOtp(user._id, user.email);
 };
