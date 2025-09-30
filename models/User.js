@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
+const { type } = require("../validations/show.validation");
 
 const userModel = new mongoose.Schema({
   username: { type: String, required: true, unique: true },
@@ -24,6 +25,11 @@ const userModel = new mongoose.Schema({
   },
   providerId: { type: String }, // Google "sub", Facebook "id", etc.
   picture: { type: String }, // profile image from provider
+  isVerified: { type: Boolean, default: false },
+  otp: { type: String },
+  otpExpires: { type: Date },
+  otpAttempts: { type: Number, default: 0 },
+  otpLockedUntil: { type: Date },
 });
 
 module.exports = mongoose.model("User", userModel);
