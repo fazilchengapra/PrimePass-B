@@ -1,6 +1,7 @@
 const nodemailer = require("nodemailer");
 const fs = require("fs");
 const path = require("path");
+require('dotenv').config();
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
@@ -40,6 +41,36 @@ exports.sendBookingConfirmMail = async (toEmail, bookingDetails) => {
     console.log(`✅ Booking confirmation email sent to ${toEmail}`);
   } catch (error) {
     console.error("❌ Error sending booking confirmation email:", error);
+    throw error;
+  }
+};
+
+exports.sendOtpEmail = async (email, name, otp) => {
+  try {
+    // 2. Load HTML template
+    const templatePath = path.join(
+      __dirname,
+      "../templates/otpVerification.html"
+    );
+    let htmlTemplate = fs.readFileSync(templatePath, "utf8");
+    
+    // 3. Replace placeholders with booking data
+    htmlTemplate = htmlTemplate
+      .replaceAll("{{name}}", name)
+      .replaceAll("{{otp}}", otp)
+      .replaceAll("{{email}}", email)
+      .replaceAll("{{expiryMinutes}}", 15);
+
+    // 4. Send the email
+    await transporter.sendMail({
+      from: `"PrimePass" <${process.env.EMAIL_USER}>`,
+      to: "abdulmajeedchengapra@gmail.com",
+      subject: "🔐 Your One-Time Password (OTP) for PrimePass",
+      html: htmlTemplate,
+    });
+
+    console.log(`✅ Booking confirmation email sent to ${email}`);
+  } catch (error) {
     throw error;
   }
 };

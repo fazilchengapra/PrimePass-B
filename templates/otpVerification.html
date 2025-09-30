@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Email Verification</title>
+    </head>
+    <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f5f5f5;">
+      <table role="presentation" style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;">
+        <tr>
+          <td align="center" style="padding: 20px 10px;">
+            <!--[if mso]>
+            <table role="presentation" style="width: 600px;" cellspacing="0" cellpadding="0" border="0">
+            <tr>
+            <td>
+            <![endif]-->
+            <table role="presentation" style="width: 100%; max-width: 600px; border-collapse: collapse; background-color: #ffffff; border: 1px solid #e5e5e5; border-radius: 8px; overflow: hidden;">
+              
+              <!-- Header -->
+              <tr>
+                <td style="padding: 24px 20px; background-color: #ffffff; border-bottom: 1px dashed #e5e5e5;">
+                  <table role="presentation" style="width: 100%; border-collapse: collapse;">
+                    <tr>
+                      <td style="vertical-align: middle;">
+                        <div style="width: 36px; height: 36px; display: inline-flex; align-items: center; justify-content: center;">
+                          <img style="border-radius: 50%;" src="https://prime-pass-six.vercel.app/asset/primePassLogo.png" alt="PrimePass Logo">
+                        </div>
+                      </td>
+                      <td style="vertical-align: middle; padding-left: 12px;">
+                        <h1 style="margin: 0; font-size: 18px; font-weight: 600; color: #1a1a1a;">PrimePass</h1>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+
+              <!-- Content -->
+              <tr>
+                <td style="padding: 24px 20px;">
+                  <p style="margin: 0 0 16px; font-size: 15px; line-height: 1.5; color: #4a4a4a;">Hi {{name}},</p>
+                  
+                  <p style="margin: 0 0 24px; font-size: 15px; line-height: 1.5; color: #4a4a4a;">This is your verification code:</p>
+                  
+                  <!-- OTP Code Display -->
+                  <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 0 0 24px;">
+                    <tr>
+                      <td align="center" style="padding: 20px 0;">
+                        <div style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 16px 32px; border-radius: 12px; box-shadow: 0 4px 6px rgba(102, 126, 234, 0.3);">
+                          <span style="font-size: 36px; font-weight: 700; color: #ffffff; letter-spacing: 8px; display: block; text-align: center;">{{otp}}</span>
+                        </div>
+                      </td>
+                    </tr>
+                  </table>
+                  
+                  <p style="margin: 0 0 24px; font-size: 14px; line-height: 1.5; color: #6b6b6b;">This code will only be valid for the next {{expiryMinutes}} minutes. If the code does not work, you can use this login verification link:</p>
+                  
+                  <!-- Button -->
+                  <table role="presentation" style="margin: 0 0 24px;">
+                    <tr>
+                      <td>
+                        <a href="#" style="display: inline-block; padding: 12px 24px; background-color: #8b5cf6; color: #ffffff; text-decoration: none; border-radius: 6px; font-size: 14px; font-weight: 500;">Verify email</a>
+                      </td>
+                    </tr>
+                  </table>
+                  
+                  <p style="margin: 0; font-size: 15px; line-height: 1.5; color: #4a4a4a;">Thanks,<br>The team</p>
+                </td>
+              </tr>
+
+              <!-- Footer -->
+              <tr>
+                <td style="padding: 20px; background-color: #fafafa; border-top: 1px dashed #e5e5e5;">
+                  <p style="margin: 0 0 12px; font-size: 13px; line-height: 1.5; color: #6b6b6b;">
+                    This email was sent to <a href="mailto:{{email}}" style="color: #8b5cf6; text-decoration: none;">{{email}}</a>. If you'd rather not receive this kind of email, you can <a href="#" style="color: #8b5cf6; text-decoration: none;">unsubscribe</a> or <a href="#" style="color: #8b5cf6; text-decoration: none;">manage your email preferences</a>.
+                  </p>
+                  <p style="margin: 0; font-size: 12px; color: #9b9b9b;">© 2025 PrimePass</p>
+                </td>
+              </tr>
+
+              <!-- Social Links -->
+              <tr>
+                <td align="center" style="padding: 20px; background-color: #fafafa;">
+                  <table role="presentation" style="border-collapse: collapse;">
+                    <tr>
+                      <td style="padding: 0 8px;">
+                        <a href="#" style="color: #9b9b9b; text-decoration: none;">
+                          <img src="https://cdn-icons-png.flaticon.com/512/733/733579.png" alt="X" style="width: 20px; height: 20px; display: block;">
+                        </a>
+                      </td>
+                      <td style="padding: 0 8px;">
+                        <a href="#" style="color: #9b9b9b; text-decoration: none;">
+                          <img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" alt="Facebook" style="width: 20px; height: 20px; display: block;">
+                        </a>
+                      </td>
+                      <td style="padding: 0 8px;">
+                        <a href="#" style="color: #9b9b9b; text-decoration: none;">
+                          <img src="https://cdn-icons-png.flaticon.com/512/733/733558.png" alt="Instagram" style="width: 20px; height: 20px; display: block;">
+                        </a>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+            <!--[if mso]>
+            </td>
+            </tr>
+            </table>
+            <![endif]-->
+          </td>
+        </tr>
+      </table>
+    </body>
+    </html>
