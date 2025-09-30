@@ -107,5 +107,5 @@ exports.registrationOtpVerification = async (email, otp) => {
   user.otpAttempts = 0;
   user.otpLockedUntil = undefined;
   await user.save();
-  return user._id
+  return user
 };

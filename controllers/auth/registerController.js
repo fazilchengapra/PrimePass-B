@@ -32,8 +32,8 @@ exports.verifyRegistrationOtp = async (req, res) => {
     if (error) return sendResponse(res, 400, "Invalid Credentials", false);
     const { email, otp } = req.body;
 
-    const userId = await registrationOtpVerification(email, otp);
-    const token = jwt.sign({ id: userId }, process.env.JWT_SECRET, {
+    const user = await registrationOtpVerification(email, otp);
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
       expiresIn: "7d",
     });
     res
@@ -46,6 +46,11 @@ exports.verifyRegistrationOtp = async (req, res) => {
       .status(200)
       .json({
         message: "Login successful",
+        user: {
+        _id: user._id,
+        username: user.username,
+        email: user.email,
+      },
       });
   } catch (error) {
     if (error.message.includes("Invalid Credentials")) {
