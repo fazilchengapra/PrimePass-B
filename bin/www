@@ -14,7 +14,7 @@ var connectDb = require("../utils/db");
 var { Server } = require("socket.io");
 
 /**
- * Get port from environment and store in Express.
+ * Get port from environment and store in Express
  */
 var port = normalizePort(process.env.PORT || "3000");
 app.set("port", port);
@@ -31,6 +31,7 @@ var io = new Server(server, {
   cors: {
     origin: process.env.URL || "http://localhost:3000", // change to frontend url in production
     methods: ["GET", "POST"],
+    credentials: true
   },
 });
 
