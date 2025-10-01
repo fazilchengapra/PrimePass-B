@@ -88,7 +88,6 @@ exports.registerUser = async (userData) => {
     );
   else
     user = await User.create({ username, email, password: hashedPass, role });
-
   await generateAndSendOtp(user._id, user.email, user.username);
 };
 
