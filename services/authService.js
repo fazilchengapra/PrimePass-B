@@ -69,6 +69,15 @@ exports.registerUser = async (userData) => {
     throw new Error(`This ${field} already in use`);
   }
 
+  if (user && user.otpLockedUntil && user.otpLockedUntil > Date.now()) {
+    const minutesLeft = Math.ceil(
+      user.otpLockedUntil - Date.now() / (60 * 1000)
+    );
+    throw new Error(
+      `Too many invalid attempts. Please try again in ${minutesLeft} minutes.`
+    );
+  }
+
   const hashedPass = await hashPassword(password);
   if (user && !user.isVerified)
     user = await User.findByIdAndUpdate(
@@ -84,20 +93,28 @@ exports.registerUser = async (userData) => {
 exports.registrationOtpVerification = async (email, otp) => {
   const user = await User.findOne({ email });
   if (!user) throw new Error("Invalid Credentials");
+
   if (user.isVerified) throw new Error("Something went wrong!");
-  if(user.otpLockedUntil && user.otpLockedUntil > Date.now()) {
-    const minutesLeft = Math.ceil((user.otpLockedUntil - Date.now()) / (60 * 1000));
-    throw new Error(`Too many invalid attempts. Please try again in ${minutesLeft} minutes.`);
+
+  if (user.otpLockedUntil && user.otpLockedUntil > Date.now()) {
+    const minutesLeft = Math.ceil(
+      (user.otpLockedUntil - Date.now()) / (60 * 1000)
+    );
+    throw new Error(
+      `Too many invalid attempts. Please try again in ${minutesLeft} minutes.`
+    );
   }
+
   if (!user.otp || !user.otpExpires)
     throw new Error("OTP expired! Please request a new one");
   const isMatch = await bcrypt.compare(otp, user.otp);
 
   if (!isMatch) {
     user.otpAttempts += 1;
-    if(user.otpAttempts >= 6) user.otpLockedUntil = Date.now() + 15 * 60 * 1000; // 15 minutes lock
+    if (user.otpAttempts >= 6)
+      user.otpLockedUntil = Date.now() + 15 * 60 * 1000; // 15 minutes lock
     await user.save();
-    throw new Error("Invalid Credentials")
+    throw new Error("Invalid Credentials");
   }
   if (user.otpExpires < Date.now())
     throw new Error("OTP expired! Please request a new one");
@@ -106,6 +123,12 @@ exports.registrationOtpVerification = async (email, otp) => {
   user.otpExpires = undefined;
   user.otpAttempts = 0;
   user.otpLockedUntil = undefined;
-  await user.save();
-  return user
+  await User.updateOne(
+    { _id: user._id },
+    {
+      $unset: { otp: "", otpExpires: "", otpAttempts: "", otpLockedUntil: "" },
+      isVerified: true,
+    }
+  );
+  return user;
 };
