@@ -8,7 +8,7 @@ exports.login = async (req, res) => {
     const { error } = loginSchema.validate(req.body);
     if (error) return sendResponse(res, 400, "Something went wrong!", false);
 
-    loginUser(res, req.body);
+    await loginUser(res, req.body);
   } catch (err) {
     if(err.message.includes("incorrect")){
       return sendResponse(res, 401, err.message, false)
