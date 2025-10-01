@@ -1,7 +1,7 @@
 const { login } = require("./loginController")
 const { logout } = require("./logoutController")
 const { googleOauth } = require("./oauthController")
-const { register } = require("./registerController")
+const { register, verifyRegistrationOtp } = require("./registerController")
 const { isMe } = require("./sessionController")
 
 
@@ -10,5 +10,6 @@ module.exports = {
     logout,
     register,
     googleOauth,
-    isMe
+    isMe,
+    verifyRegistrationOtp
 }

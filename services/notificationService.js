@@ -64,12 +64,10 @@ exports.sendOtpEmail = async (email, name, otp) => {
     // 4. Send the email
     await transporter.sendMail({
       from: `"PrimePass" <${process.env.EMAIL_USER}>`,
-      to: "abdulmajeedchengapra@gmail.com",
+      to: email,
       subject: "🔐 Your One-Time Password (OTP) for PrimePass",
       html: htmlTemplate,
     });
-
-    console.log(`✅ Booking confirmation email sent to ${email}`);
   } catch (error) {
     throw error;
   }
