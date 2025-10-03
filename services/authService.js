@@ -1,10 +1,10 @@
 const { OAuth2Client } = require("google-auth-library");
 const jwt = require("jsonwebtoken");
-const { findOrCreateGoogleUser } = require("./oauth.service");
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const { hashPassword } = require("./cryptoService");
 const { generateAndSendOtp } = require("./otpService");
+const { sendAuthResponse } = require("../utils/jwtHelper");
 require("dotenv").config();
 
 exports.loginUser = async (res, userData) => {
@@ -19,47 +19,7 @@ exports.loginUser = async (res, userData) => {
   const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) throw new Error("Email or password incorrect");
 
-  const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-    expiresIn: "7d",
-  });
-  res
-    .cookie("token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "Lax",
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-    })
-    .status(200)
-    .json({
-      message: "Login successful",
-      user: {
-        _id: user._id,
-        username: user.username,
-        email: user.email,
-      },
-    });
-};
-
-exports.verifyGoogleUser = async (code) => {
-  const client = new OAuth2Client(
-    process.env.GOOGLE_CLIENT_ID,
-    process.env.GOOGLE_CLIENT_SECRET,
-    "postmessage"
-  );
-
-  const { tokens } = await client.getToken(code);
-  const idToken = tokens.id_token;
-
-  // 2. Verify the ID token to get user details
-  const ticket = await client.verifyIdToken({
-    idToken,
-    audience: process.env.GOOGLE_CLIENT_ID,
-  });
-  const payload = ticket.getPayload();
-
-  if (!payload) throw new Error("Invalid token payload");
-  const user = await findOrCreateGoogleUser(payload);
-  return user;
+  sendAuthResponse(res, user);
 };
 
 exports.registerUser = async (userData) => {
