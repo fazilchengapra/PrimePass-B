@@ -1,10 +1,10 @@
 const { OAuth2Client } = require("google-auth-library");
 const jwt = require("jsonwebtoken");
-const User = require("../models/User");
+const User = require("../../models/User");
 const bcrypt = require("bcryptjs");
-const { hashPassword } = require("./cryptoService");
-const { generateAndSendOtp } = require("./otpService");
-const { sendAuthResponse } = require("../utils/jwtHelper");
+const { hashPassword } = require("../cryptoService");
+const { generateAndSendOtp } = require("../otpService");
+const { sendAuthResponse } = require("../../utils/jwtHelper");
 require("dotenv").config();
 
 exports.loginUser = async (res, userData) => {

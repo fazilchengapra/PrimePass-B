@@ -1,14 +1,11 @@
 const jwt = require("jsonwebtoken");
-const {
-  registerUser,
-  registrationOtpVerification,
-} = require("../../services/authService");
 const sendResponse = require("../../utils/sendResponse");
 const {
   registerSchema,
   otpSchema,
 } = require("../../validations/auth.validation");
 const { sendAuthResponse } = require("../../utils/jwtHelper");
+const { registerUser, registrationOtpVerification } = require("../../services/auth");
 
 exports.register = async (req, res) => {
   try {

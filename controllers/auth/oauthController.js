@@ -1,4 +1,4 @@
-const { verifyGoogleUser } = require("../../services/googleAuthService");
+const { verifyGoogleUser } = require("../../services/auth");
 const { sendAuthResponse } = require("../../utils/jwtHelper");
 const sendResponse = require("../../utils/sendResponse");
 const jwt = require("jsonwebtoken");

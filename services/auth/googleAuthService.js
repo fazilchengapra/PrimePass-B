@@ -1,5 +1,5 @@
 const { OAuth2Client } = require("google-auth-library");
-const User = require("../models/User");
+const User = require("../../models/User");
 require("dotenv").config();
 
 const findOrCreateGoogleUser = async ({ email, name, sub }) => {
