@@ -7,8 +7,9 @@ const {
   isMe,
   logout,
   googleOauth,
-  registrationOtpVerification,
   verifyRegistrationOtp,
+  forgotPassword,
+  resetPassword,
 } = require("../controllers/auth");
 
 router.post("/register", register);
@@ -17,5 +18,7 @@ router.get("/me", authMiddleware, isMe);
 router.post("/logout", logout);
 router.post("/googleOauth", googleOauth);
 router.post("/verify-email", verifyRegistrationOtp);
+router.post('/forgot-password', forgotPassword)
+router.post('/reset-password', resetPassword)
 
 module.exports = router;

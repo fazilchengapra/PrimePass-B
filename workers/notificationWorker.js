@@ -3,6 +3,7 @@ const connection = require("../redis/connection");
 const {
   sendOtpEmail,
   sendBookingConfirmMail,
+  sendResetPasswordEmail,
 } = require("../services/notificationService");
 
 const worker = new Worker(
@@ -19,6 +20,12 @@ const worker = new Worker(
         return await sendBookingConfirmMail(
           job.data.mail,
           job.data.sendMailDetails
+        );
+      case "resetPassword":
+        return sendResetPasswordEmail(
+          job.data.email,
+          job.data.name,
+          job.data.resetUrl
         );
       default:
         throw new Error("Unknown job type");
