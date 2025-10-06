@@ -1,6 +1,7 @@
 const {
   forgotUserPass,
   resetUserPass,
+  isValidResetToken,
 } = require("../../services/auth/passwordService");
 const sendResponse = require("../../utils/sendResponse");
 const {
@@ -34,10 +35,10 @@ exports.resetPassword = async (req, res) => {
     const { newPassword } = req.body;
     if (!token || !email || !newPassword)
       return sendResponse(res, 400, "Oops! Something went wrong!", false);
-    
+
     const { error } = loginSchema.validate({ email, password: newPassword });
     if (error) return sendResponse(res, 400, "Something went wrong!", false);
-    
+
     await resetUserPass(email, newPassword, token);
 
     return sendResponse(res, 200, "Password reset successful", true);
@@ -46,5 +47,20 @@ exports.resetPassword = async (req, res) => {
       return sendResponse(res, 400, error.message, false);
     console.error("Reset Password error: ", error);
     return sendResponse(res, 500, "Reset Password failed", false);
+  }
+};
+
+exports.validateResetToken = async (req, res) => {
+  try {
+    const token = req.query.token;
+    if (!token)
+      return sendResponse(res, 400, "Invalid or expired token", false);
+    await isValidResetToken(token);
+    return sendResponse(res, 200, "Valid token", true);
+  } catch (error) {
+    if (error.message.includes("Invalid or expired token"))
+      return sendResponse(res, 400, error.message, false);
+    console.error("Validate Reset Token error: ", error);
+    return sendResponse(res, 500, "Token validation failed", false);
   }
 };
