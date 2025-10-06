@@ -11,6 +11,7 @@ const {
   forgotPassword,
   resetPassword,
 } = require("../controllers/auth");
+const { validateResetToken } = require("../controllers/auth/passwordController");
 
 router.post("/register", register);
 router.post("/login", login);
@@ -20,5 +21,6 @@ router.post("/googleOauth", googleOauth);
 router.post("/verify-email", verifyRegistrationOtp);
 router.post('/forgot-password', forgotPassword)
 router.post('/reset-password', resetPassword)
+router.get('/validate-reset-token', validateResetToken)
 
 module.exports = router;

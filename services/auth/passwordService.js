@@ -45,3 +45,13 @@ exports.resetUserPass = async (email, password, token) => {
   user.resetPasswordExpires = undefined;
   await user.save();
 };
+
+exports.isValidResetToken = async (token) => {
+  const tokenHash = hashedToken(token);
+  const user = await User.findOne({
+    resetPasswordToken: tokenHash,
+    resetPasswordExpires: { $gt: Date.now() },
+  });
+  if (!user) throw new Error("Invalid or expired token");
+  return true;
+};
