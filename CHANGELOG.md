@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [upcoming]
+### Added
+- added forgot password functionality
+- added html email template for reset password token link
+
 ## [1.0.0] - 27/09/25
 ### Added
 - Initial release PrimePass with movie browsing and booking

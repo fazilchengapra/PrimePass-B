@@ -21,8 +21,8 @@ exports.forgotPassword = async (req, res) => {
       true
     );
   } catch (error) {
-    if (error.message.include("Something went wrong"))
-      return sendResponse(res, 500, error.message, false);
+    if (error.message.includes("Something went wrong"))
+      return sendResponse(res, 400, error.message, false);
     console.error("Forgot Password error: ", error);
     return sendResponse(res, 500, "Forgot Password failed", false);
   }
