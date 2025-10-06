@@ -20,8 +20,13 @@ const otpSchema = Joi.object({
   otp: Joi.string().trim().length(6).required(),
 });
 
+const forgotPasswordSchema = Joi.object({
+  email: Joi.string().trim().email().required(),
+});
+
 module.exports = {
   registerSchema,
   loginSchema,
-  otpSchema
+  otpSchema,
+  forgotPasswordSchema
 };

@@ -1,13 +1,11 @@
 const jwt = require("jsonwebtoken");
-const {
-  registerUser,
-  registrationOtpVerification,
-} = require("../../services/authService");
 const sendResponse = require("../../utils/sendResponse");
 const {
   registerSchema,
   otpSchema,
 } = require("../../validations/auth.validation");
+const { sendAuthResponse } = require("../../utils/jwtHelper");
+const { registerUser, registrationOtpVerification } = require("../../services/auth");
 
 exports.register = async (req, res) => {
   try {
@@ -33,25 +31,7 @@ exports.verifyRegistrationOtp = async (req, res) => {
     const { email, otp } = req.body;
 
     const user = await registrationOtpVerification(email, otp);
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "7d",
-    });
-    res
-      .cookie("token", token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: process.env.NODE_ENV === "production" ? "none" : "Lax",
-        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-      })
-      .status(200)
-      .json({
-        message: "Login successful",
-        user: {
-        _id: user._id,
-        username: user.username,
-        email: user.email,
-      },
-      });
+    sendAuthResponse(res, user);
   } catch (error) {
     if (error.message.includes("Invalid Credentials")) {
       return sendResponse(res, 401, error.message, false);

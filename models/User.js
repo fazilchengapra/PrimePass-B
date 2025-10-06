@@ -32,6 +32,8 @@ const userModel = new mongoose.Schema(
     otpExpires: { type: Date },
     otpAttempts: { type: Number, default: 0 },
     otpLockedUntil: { type: Date },
+    resetPasswordToken: {type: String},
+    resetPasswordExpires: {type: Date},
   },
   { timestamps: true }
 );

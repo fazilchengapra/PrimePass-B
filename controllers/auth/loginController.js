@@ -1,4 +1,4 @@
-const { loginUser } = require("../../services/authService");
+const { loginUser } = require("../../services/auth");
 const sendResponse = require("../../utils/sendResponse");
 const { loginSchema } = require("../../validations/auth.validation");
 

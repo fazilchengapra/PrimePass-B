@@ -1,5 +1,4 @@
 const IORedis = require('ioredis');
-const { max } = require('../validations/show.validation');
 
 const connection = new IORedis({
   host: process.env.REDIS_HOST || '127.0.0.1',

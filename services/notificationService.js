@@ -1,7 +1,7 @@
 const nodemailer = require("nodemailer");
 const fs = require("fs");
 const path = require("path");
-require('dotenv').config();
+require("dotenv").config();
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
@@ -53,7 +53,7 @@ exports.sendOtpEmail = async (email, name, otp) => {
       "../templates/otpVerification.html"
     );
     let htmlTemplate = fs.readFileSync(templatePath, "utf8");
-    
+
     // 3. Replace placeholders with booking data
     htmlTemplate = htmlTemplate
       .replaceAll("{{name}}", name)
@@ -66,6 +66,32 @@ exports.sendOtpEmail = async (email, name, otp) => {
       from: `"PrimePass" <${process.env.EMAIL_USER}>`,
       to: email,
       subject: "🔐 Your One-Time Password (OTP) for PrimePass",
+      html: htmlTemplate,
+    });
+  } catch (error) {
+    throw error;
+  }
+};
+
+exports.sendResetPasswordEmail = async (email, name, resetUrl) => {
+  try {
+    // 2. Load HTML template
+    const templatePath = path.join(
+      __dirname,
+      "../templates/resetPassword.html"
+    );
+    let htmlTemplate = fs.readFileSync(templatePath, "utf8");
+
+    // 3. Replace placeholders with booking data
+    htmlTemplate = htmlTemplate
+      .replaceAll("{{name}}", name)
+      .replaceAll("{{mail}}", email)
+      .replaceAll("{{resetUrl}}", resetUrl);
+    // 4. Send the email
+    await transporter.sendMail({
+      from: `"PrimePass" <${process.env.EMAIL_USER}>`,
+      to: email,
+      subject: "🔑 Reset Your PrimePass Password",
       html: htmlTemplate,
     });
   } catch (error) {
